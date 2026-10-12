@@ -1,40 +1,36 @@
+UNITY C# ATTACK & SPECIAL MOVE
+// MONO AND RIGID
+// Player GameObject need: Rigidbody2D, a Collider2D, for the C# Script
 
-
-C#
-UNITY C# ATTACK AND SPECIAL MOVE
-//MONO AND RIGID
-// Player GameObjectiveb need: Rigidbody2D, a collider, for the C# Script
-
-CONTROLS: A/D move | Space Jump (hold in air to glide) |
-LeftShift slide | 3 sword | K throw
+CONTROLS: A/D move | Space Jump (hold in air to glide) | LeftShift slide | J word | K throw
 
 linearVelocity
-// code proper
-using UnityEngine; 
 
-[Require Component(typeof(Rigidbody2D))]
+// Code Proper
+using UnityEngine;
+
+[RequiredComponent(typeof(Rigidbody2D))]
 public class SpecialMoves : MonoBehaviour
 
-{
+{ 
 	[Header("Movement")]
 	public float moveSpeed = 6f;
 	public float jumpForce = 12f;
-	
 
-	[Header("GroundCheck")]
+	[Header("Ground Check")]
 	public Transform groundCheck;
 	public float groundRadius = 0.2f;
 	public LayerMark groundLayer;
 
-	[Header("Glide")]
-	public float slideSpeed= 12f;
+	[Header("Slide")]
+	public float slideSpeed = 12f;
 	public float slideDuration = 0.35f;
 	public float slideCooldown = 0.6f;
 
 	[Header("Glide")]
-	public floatGravityScale = 0.15f;
+	public float glideGravityScale = 0.15f;
 	public float glideMaxFallSpeed = 2f;
-
+	
 	[Header("Sword Swing")]
 	public Transform swordPoint;
 	public float swordRadius = 0.6f;
@@ -50,93 +46,71 @@ public class SpecialMoves : MonoBehaviour
 	private Rigidbody2D rb;
 	private float defaultGravity;
 	private int facing = 1 // 1 = right, -1 = left
-	private bool isGrounded; 
-	private bool isSliding; 
-	private bool isAttacking; 
-	private bool isGliding; 
-	private bool is slideTimer, slideCdTimer, attackTimer, throwCdTimer; 
-	private float horizontalInput; 
-	
+	private bool isGrounded;
+	private bool isSliding;
+	private bool isAttacking;
+	private bool isGliding;
+	private float slideTimer, slideCdTimer, attackTimer, throwCdTimer;
+	private float horizontalInput;
+
 void Start()
 	{
 	rb = GetComponent<Rigidbody2D>();
-	defaultGravity = rb.gravityScale; 
+	defaultGravity = rb.gravityScale;
 	}
-	// Input = timers = one-shot action live in Update functions
+	// Input + Timer + one-shot actions line in Update functions
 void Update()
-
 	{
-	horizontalInput=
-Input.GetAxisRaw("Horizontal");
-	isGround=
-Physics2D.OverlapCircle(groundCheck.position, groundRadius, ground(Layer);
+	horizontalInput = Input.GetAxisRaw("Horizontal");
+	isGround = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
 
-	TickTimer();
+	TickTimers();
 	UpdateFacing();
 
-	//JUMP
-	if (Input.GetKeyDown(KeyCode.Space) && is Grounded && ! isSliding)
-	{
-	rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+		// JUMP
+		if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isSliding)
+		{
+		rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+		}
+
+		// GLIDE: hold jump while falling
+		isGliding = Input.GetKey(KeyCode.Space) && !isGrounded && rb.velocity.y < 0f;
+ 	
+		// SLIDE
+		if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !isSliding && slideCdTimer <= 0f)
+		{
+		isSliding = trie;
+		slideTimer = slideDuration;
+		slideCdTimer = slideCooldown;
+		}
+
+		// SWORD SWING
+		if (Input.GetKeyDown(KeyCode.J) && !isAttacking && !isSliding)
+		{
+		SwingSword();
+		}
+
+		// THROW
+		if (Input.GetKeyDown(KeyCode.K) && throwCdTimer <= 0f && !projectilePrefab != null)
+		{
+		ThrowProjectile();
+		}
 	}
 
-	//Glide: hold jump while falling
-	isGliding = Input.GetKey(KeyCode.Space) && !isGrounded && rb.velocity.y<of;
-	
-	//Slide
-	if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && ! isSliding && slideCdTimer < = of);
-	{
-	isSliding = true; 
-	slideTimer = slideDuration;
-	slideCdTimer = slideCooldown; 
-	}
-	
-	//Sword Swing
-	if (Input.GetKeyDown(KeyCode.J) && ! isAttacking && isSliding)
-	{
-	SwingSword();
-	}
-	
-	//Throw
-	if (Input.GetKeyDown(KeyCode.K) && throwCdtimer < = of && projectilePrefab !=null)
-	{
-	   ThrowProjectile();
-           	}
-       }
-
-//Physics changes live in FixedUpdate
+// Physics changes live in FixedUpdate
 void FixedUpdate()
-
 	{
-	//Horizontal Velocity: slide overrides norma movement float xVelocity = isSliding? facing *slideSpeed : horizontalInput* movementSpeed; 
+	// Horizontal Velocity: slide overrides normal movement
+	float xVelocity = isSliding? facing * slideSpeed : horizontalInput * moveSpeed;
 	rb.velocity = new Vector2(xVelocity, rb.velocity.y);
 
-	// Glide = low gravity = capped fall speed. Otherwise restore normal gravity.
-	rb.gravityScale = isGliding? glideGravityScale : defaultGravity; 
-	if (is Gliding && rb.velocity.y < 
+	// Glide = low gravity + capped fall speed. Otherwise restore normal gravity.
+	rb.gravityScale = isGliding? glideGravityScale : defaultGravity;
+	if(isGliding && rb.velocity.y < glideMaxFallSpeed)
+	
+		{
+		= RB.VELOCITY = new Vector2(rb.velocity.x - glideMaxFallSpeed);
+		}
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
